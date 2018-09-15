@@ -15,6 +15,7 @@ static const char dmenufont[]      = "dina:size=8";
 #define NORBG "color8"
 #define SELFG "color15"
 #define SELBG "background"
+#define URGENT "color1"
 
 /* tagging */
 static const char *tags[] = { "一", "二", "三", "四", "五", "六", "七", "八", "九" };

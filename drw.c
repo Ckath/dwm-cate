@@ -203,7 +203,8 @@ drw_clr_free(Clr *clr)
 void
 drw_setscheme(Drw *drw, ClrScheme *scheme)
 {
-	drw->scheme = scheme;
+	if (scheme->bg && scheme->fg)
+		drw->scheme = scheme;
 }
 
 int

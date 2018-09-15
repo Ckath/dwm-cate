@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <pwd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <X11/cursorfont.h>
@@ -51,8 +52,7 @@
                                * MAX(0, MIN((y)+(h),(m)->wy+(m)->wh) - MAX((y),(m)->wy)))
 #define ISVISIBLE(C)            (C->tags & C->mon->tagset[C->mon->seltags])
 #define LENGTH(X)               (sizeof X / sizeof X[0])
-#define MAXCOLORS               9
-#define NUMCOLORS               2
+#define MAXCOLORS               3
 #define MOUSEMASK               (BUTTONMASK|PointerMotionMask)
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw + gappx)
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw + gappx)
@@ -252,7 +252,6 @@ static void comboview(const Arg *arg);
 
 
 /* variables */
-char colors[NUMCOLORS][MAXCOLORS][8] = { { "", "", "" }, { "", "", "" } };
 static const char broken[] = "broken";
 static char stext[256];
 static int screen;
@@ -894,13 +893,13 @@ drawbar(Monitor *m)
 	x += w;
 	xx = x;
 	if (m == selmon) { /* status is only drawn on selected monitor */
-		w = drw_get_width(drw, NUMCOLORS, stext);
+		w = drw_get_width(drw, MAXCOLORS, stext);
 		x = m->ww - w;
 		if (x < xx) {
 			x = xx;
 			w = m->ww - xx;
 		}
-		drw_colored_text(drw, scheme, NUMCOLORS, x, 0, w, bh, stext);
+		drw_colored_text(drw, scheme, MAXCOLORS, x, 0, w, bh, stext);
 	} else
 		x = m->ww;
 	if ((w = x - xx) > bh) {
@@ -1496,12 +1495,22 @@ recolor(const Arg *arg)
 	size_t len = 0;
 	ssize_t nread;
 	char *line_buf = NULL;
-	FILE *fp = fopen("/home/cat/.Xresources", "r");
-	char norbg[8], norfg[8], selbg[8], selfg[8];
+	char colors[MAXCOLORS][MAXCOLORS][8] = { { "", "", "" }, { "", "", "" }, { "", "", "" } };
+	char norbg[8], norfg[8], selbg[8], selfg[8], urgbg[8];
+
+	const char *home;
+	char xresources_file[100];
+	if (!(home = getenv("HOME"))) {
+		home = getpwuid(getuid())->pw_dir;
+	}
+	sprintf(xresources_file, "%s/.Xresources", home);
+	FILE *fp = fopen(xresources_file, "r");
 
 	if (fp == NULL) {
 		fprintf(stderr, "failed to open Xresources\n");
+		exit(1);
 	}
+	
 	while ((nread = getline(&line_buf, &len, fp)) != -1) {
 		if (norbg[0] != '#') {
 			sscanf(line_buf, "*." NORBG ": %7s", norbg);
@@ -1511,6 +1520,8 @@ recolor(const Arg *arg)
 			sscanf(line_buf, "*." SELBG ": %7s", selbg);
 		} if (selfg[0] != '#') {
 			sscanf(line_buf, "*." SELFG ": %7s", selfg);
+		} if (selfg[0] != '#') {
+			sscanf(line_buf, "*." URGENT ": %7s", urgbg);
 		}
 	}
 	fclose(fp);
@@ -1521,8 +1532,11 @@ recolor(const Arg *arg)
 	strcpy(colors[1][0], selbg);
 	strcpy(colors[1][1], selfg);
 	strcpy(colors[1][2], selbg);
+	strcpy(colors[2][0], urgbg);
+	strcpy(colors[2][1], selbg);
+	strcpy(colors[2][2], urgbg);
 
-	for (int i = 0; i < NUMCOLORS; i++) {
+	for (int i = 0; i < MAXCOLORS; i++) {
 		scheme[i].border = drw_clr_create(drw, colors[i][0]);
 		scheme[i].fg = drw_clr_create(drw, colors[i][1]);
 		scheme[i].bg = drw_clr_create(drw, colors[i][2]);
@@ -2512,10 +2526,10 @@ main(int argc, char *argv[])
 	if (argc == 2 && !strcmp("-v", argv[1]))
 		die("dwm-"VERSION);
 	if (argc == 2 && !strcmp("-d", argv[1])) {
-        if (daemon(1, 1) < 0) {
-            die("dwm: failed to daemonize");
-        }
-    }
+		if (daemon(1, 1) < 0) {
+			die("dwm: failed to daemonize");
+		}
+	}
 	else if (argc != 1)
 		die("usage: dwm [-v]");
 	if (!setlocale(LC_CTYPE, "") || !XSupportsLocale())
