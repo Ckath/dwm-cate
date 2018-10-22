@@ -17,4 +17,5 @@ my pre patched dwm setup, kept up to date with upstream manually, for the most. 
     - noborder
     - rotatestack
     - xresourcescolors
+	- r/ltile
     - possibly more

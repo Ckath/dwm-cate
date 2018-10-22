@@ -35,13 +35,14 @@ static const Rule rules[] = {
 	{ "com-intellij-rt-execution-application-AppMain",
 	              NULL,       NULL,       0,            1,           -1 },
 	{ "Quartus",  NULL,       NULL,       1 << 7,       0,           -1 },
-	{ "Steam",    NULL,       NULL,       1 << 7,       0,           -1 },
+	{ "Steam",    NULL,       NULL,       1 << 6,       0,           -1 },
+	{ "gimp",     NULL,       NULL,       1 << 7,       0,           -1 },
 	{ "discord",  NULL,       NULL,       0,            0,            1 },
 	{ "TelegramDesktop",NULL, NULL,       1 << 1,       0,            1 },
 };
 
 /* layout(s) */
-static const float mfact     = 0.5; /* factor of master area size [0.05..0.95] */
+static const float mfact     = 0.45; /* factor of master area size [0.05..0.95] */
 static const float smfact    = 0.00; /* factor of tiled clients [0.00..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
