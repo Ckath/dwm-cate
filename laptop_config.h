@@ -7,7 +7,7 @@ static const unsigned int minwsz   = 1;       /* minimal height of a client for 
 static const unsigned int gappx    = 5;       /* gap pixel between windows */
 static const int showbar           = 1;       /* 0 means no bar */
 static const int topbar            = 1;       /* 0 means bottom bar */
-static const char *fonts[]         = { "dina:size=8", "Wuncon Siji:size=8" };
+static const char *fonts[]         = { "dina:size=8", "Siji:size=8" };
 static const char dmenufont[]      = "dina:size=8";
 
 /* colors sourced from Xresources values */
