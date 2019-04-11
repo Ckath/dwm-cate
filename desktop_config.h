@@ -7,7 +7,7 @@ static const unsigned int minwsz   = 1;       /* minimal height of a client for 
 static const unsigned int gappx    = 5;       /* gap pixel between windows */
 static const int showbar           = 1;       /* 0 means no bar */
 static const int topbar            = 1;       /* 0 means bottom bar */
-static const char *fonts[]         = { "dina:size=8", "Wuncon Siji:size=8" };
+static const char *fonts[]         = { "dina:size=8", "Siji:size=8" };
 static const char dmenufont[]      = "dina:size=8";
 
 /* colors sourced from Xresources values */
@@ -91,16 +91,22 @@ static const char *pmenucmd[]     = { "passmenu", NULL };
 static const char *recompile[]    = { "redwm.sh", NULL };
 static const char *patchcolors[]  = { "recolor.sh", "--fast", NULL };
 static const char *nightcmd[]     = { "night.sh", NULL };
+static const char *ldr_nightcmd[] = { "sct", "2000" , NULL };
+static const char *ldr_daycmd[]   = { "sct", "0" , NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ 0,                            0xff61,    spawn,          {.v = ssucmd } },
 	{ ControlMask,                  0xff61,    spawn,          {.v = ssccmd } },
 	{ 0,                            0x1008ff12,spawn,          {.v = mutecmd } },
+	{ MODKEY,                       0xff61,    spawn,          {.v = mutecmd } },
 	{ 0,                            0x1008ffb2,spawn,          {.v = muteincmd } },
+	{ MODKEY,                       0xff63,    spawn,          {.v = muteincmd } },
 	{ ControlMask,                  0x1008ff12,spawn,          {.v = otogglecmd } },
 	{ 0,                            0x1008ff13,spawn,          {.v = volucmd } },
+	{ MODKEY,                       XK_F12    ,spawn,          {.v = volucmd } },
 	{ 0,                            0x1008ff11,spawn,          {.v = voldcmd } },
+	{ MODKEY,                       XK_F11    ,spawn,          {.v = voldcmd } },
 	{ MODKEY,                       0xff1b    ,spawn,          {.v = lockcmd } },
 	{ 0,                            0x1008ff2d,spawn,          {.v = lockcmd } },
 	{ 0,                            0x1008ff2d,spawn,          {.v = suscmd } },
@@ -115,6 +121,8 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY|ControlMask|ShiftMask, XK_w,      spawn,          {.v = nmcmd } },
 	{ MODKEY,                       XK_n,      spawn,          {.v = nightcmd } },
+	{ MODKEY,                       XK_F1,     spawn,          {.v = ldr_nightcmd } },
+	{ MODKEY,                       XK_F2,     spawn,          {.v = ldr_daycmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
