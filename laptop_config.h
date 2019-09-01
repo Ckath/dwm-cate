@@ -68,7 +68,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0";
-static const char *dmenucmd[]     = { "dmenu_run_recent.sh", NULL };
+static const char *dmenucmd[]     = { "dmenu_run_recent", NULL };
 static const char *termcmd[]      = { "urxvtc", NULL };
 static const char *nmcmd[]        = { "networkmanager_dmenu", NULL };
 static const char *lockcmd[]      = { "lockscreen.sh", NULL};

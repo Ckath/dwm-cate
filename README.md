@@ -6,6 +6,7 @@ my pre patched dwm setup, kept up to date with upstream manually, for the most. 
 ![desktop](./desktop.png)
 
 * bar: default dwm bar with [sstat](https://github.com/ckath/sstat) for status
+* launcher: slightly patched [dmenu](https://github.com/ckath/dmenu-cate)
 * patches:
     - bottomstack
     - smfact
