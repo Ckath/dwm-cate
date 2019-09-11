@@ -70,7 +70,7 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0";
 static const char *dmenucmd[]     = { "dmenu_run_recent", NULL };
 static const char *termcmd[]      = { "urxvtc", NULL };
-static const char *nmcmd[]        = { "networkmanager_dmenu", NULL };
+static const char *nmmenucmd[]        = { "nmmenu.sh", NULL };
 static const char *lockcmd[]      = { "lockscreen.sh", NULL};
 static const char *suscmd[]       = { "systemctl", "suspend", NULL };
 static const char *mutecmd[]      = { "pulseaudio-ctl.sh", "mute", NULL };
@@ -111,8 +111,8 @@ static Key keys[] = {
 	{ ControlMask,                  0x1008ff03,spawn,          {.v = brightdown1 } },
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_p,      spawn,          {.v = pmenucmd } },
+	{ MODKEY|ControlMask,           XK_p,      spawn,          {.v = nmmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY|ControlMask|ShiftMask, XK_w,      spawn,          {.v = nmcmd } },
 	{ MODKEY,                       XK_n,      spawn,          {.v = nightcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -123,8 +123,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
 	{ MODKEY|ControlMask,           XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY|ControlMask,           XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY|ControlMask,           XK_k,      setsmfact,       {.f = +0.05} },
-	{ MODKEY|ControlMask,           XK_j,      setsmfact,       {.f = -0.05} },
+	{ MODKEY|ControlMask,           XK_k,      setsmfact,      {.f = +0.05} },
+	{ MODKEY|ControlMask,           XK_j,      setsmfact,      {.f = -0.05} },
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY,                       XK_q,      killclient,     {0} },
