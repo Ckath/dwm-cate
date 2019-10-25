@@ -48,6 +48,7 @@ static const float smfact    = 0.00; /* factor of tiled clients [0.00..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 
+#define PERMON_LAYOUT            /* monitor number = layout number */
 static const Layout layouts[] = {
 	/* symbol        arrange function */
 	{ "右/振り",    rtile },    /* first entry is default */

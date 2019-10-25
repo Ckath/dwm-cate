@@ -810,9 +810,16 @@ createmon(int mn)
 	m->nmaster = nmaster;
 	m->showbar = showbar;
 	m->topbar = topbar;
+#ifdef PERMON_LAYOUT
+	m->sellt = mn;
+#endif
 	m->lt[0] = &layouts[0];
 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
+#ifdef PERMON_LAYOUT
+	strncpy(m->ltsymbol, layouts[mn].symbol, sizeof m->ltsymbol);
+#else
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
+#endif
 	if (!(m->pertag = (Pertag *)calloc(1, sizeof(Pertag))))
 		die("fatal: could not malloc() %u bytes\n", sizeof(Pertag));
 	m->pertag->curtag = m->pertag->prevtag = 1;
