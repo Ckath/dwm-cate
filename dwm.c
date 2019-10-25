@@ -163,7 +163,7 @@ static void clientmessage(XEvent *e);
 static void configure(Client *c);
 static void configurenotify(XEvent *e);
 static void configurerequest(XEvent *e);
-static Monitor *createmon(void);
+static Monitor *createmon(int mn);
 static void destroynotify(XEvent *e);
 static void detach(Client *c);
 static void detachstack(Client *c);
@@ -793,7 +793,7 @@ configurerequest(XEvent *e)
 }
 
 Monitor *
-createmon(void)
+createmon(int mn)
 {
 	Monitor *m;
 	int i;
@@ -801,6 +801,11 @@ createmon(void)
 	m = ecalloc(1, sizeof(Monitor));
 	m->tagset[0] = m->tagset[1] = 1;
 	m->mfact = mfact;
+#ifdef SECONDARY_MFACT
+	if (mn) {
+		m->mfact = SECONDARY_MFACT;
+	}
+#endif
 	m->smfact = smfact;
 	m->nmaster = nmaster;
 	m->showbar = showbar;
@@ -2304,9 +2309,9 @@ updategeom(void)
 			for (i = 0; i < (nn - n); i++) {
 				for (m = mons; m && m->next; m = m->next);
 				if (m)
-					m->next = createmon();
+					m->next = createmon(i);
 				else
-					mons = createmon();
+					mons = createmon(i);
 			}
 			for (i = 0, m = mons; i < nn && m; m = m->next, i++)
 				if (i >= n
@@ -2342,7 +2347,7 @@ updategeom(void)
 #endif /* XINERAMA */
 	{ /* default monitor setup */
 		if (!mons)
-			mons = createmon();
+			mons = createmon(0);
 		if (mons->mw != sw || mons->mh != sh) {
 			dirty = 1;
 			mons->mw = mons->ww = sw;
