@@ -29,15 +29,8 @@ static const Rule rules[] = {
 	{ "firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
 	{ "firefox",  "Places",   NULL,       0,            1,           -1 },
 	{ "firefox",  "Browser",  NULL,       0,            1,           -1 },
-	{ "Icecat",   NULL,       NULL,       1 << 8,       0,           -1 },
-	{ "Icecat",   "Places",   NULL,       0,            1,           -1 },
-	{ "Icecat",   "Browser",  NULL,       0,            1,           -1 },
-	{ "Java",     NULL,       NULL,       0,            1,           -1 },
-	{ "Eclipse",  NULL,       NULL,       1 << 6,       0,           -1 },
 	{ "Lxappearance",NULL,    NULL,       0,            1,           -1 },
-	{ "com-intellij-rt-execution-application-AppMain",
-	              NULL,       NULL,       0,            1,           -1 },
-	{ "Quartus",  NULL,       NULL,       1 << 7,       0,           -1 },
+	{ "Gimp",     NULL,       NULL,       1 << 7,       0,           -1 },
 };
 
 /* layout(s) */
