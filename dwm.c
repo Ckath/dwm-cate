@@ -646,7 +646,7 @@ cleanup(void)
 		drw_clr_free(scheme[i].bg);
 		drw_clr_free(scheme[i].fg);
 	}
-+	XDestroyWindow(dpy, wmcheckwin);
+	XDestroyWindow(dpy, wmcheckwin);
 	drw_free(drw);
 	XSync(dpy, False);
 	XSetInputFocus(dpy, PointerRoot, RevertToPointerRoot, CurrentTime);
