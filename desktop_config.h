@@ -29,6 +29,9 @@ static const Rule rules[] = {
 	{ "firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
 	{ "firefox",  "Places",   NULL,       0,            1,           -1 },
 	{ "firefox",  "Browser",  NULL,       0,            1,           -1 },
+	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "Firefox",  "Places",   NULL,       0,            1,           -1 },
+	{ "Firefox",  "Browser",  NULL,       0,            1,           -1 },
 	{ "Lxappearance",NULL,    NULL,       0,            1,           -1 },
 	{ "Gimp",     NULL,       NULL,       1 << 7,       0,           -1 },
 };
@@ -75,6 +78,7 @@ static const char *voldcmd[]      = { "pulseaudio-ctl.sh", "down", NULL };
 static const char *otogglecmd[]   = { "output-toggle.sh", NULL };
 static const char *ssucmd[]       = { "upload.sh", NULL };
 static const char *ssccmd[]       = { "upload.sh", "-c", NULL };
+static const char *sstcmd[]       = { "upload.sh", "-t", NULL };
 static const char *brightup10[]   = { "bright.sh", "+", "10", NULL };
 static const char *brightdown10[] = { "bright.sh", "-", "10", NULL };
 static const char *brightup1[]    = { "bright.sh", "+", "1", NULL };
@@ -92,6 +96,7 @@ static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ 0,                            0xff61,    spawn,          {.v = ssucmd } },
 	{ ControlMask,                  0xff61,    spawn,          {.v = ssccmd } },
+	{ ShiftMask,                    0xff61,    spawn,          {.v = sstcmd } },
 	{ 0,                            0x1008ff12,spawn,          {.v = mutecmd } },
 	{ MODKEY,                       0xff61,    spawn,          {.v = mutecmd } },
 	{ 0,                            0x1008ffb2,spawn,          {.v = muteincmd } },
