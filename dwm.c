@@ -37,6 +37,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xproto.h>
 #include <X11/Xutil.h>
+#include <X11/Xresource.h>
 #ifdef XINERAMA
 #include <X11/extensions/Xinerama.h>
 #endif /* XINERAMA */
@@ -1522,49 +1523,24 @@ recttomon(int x, int y, int w, int h)
 static void
 recolor(const Arg *arg)
 {
-	size_t len = 0;
-	ssize_t nread;
-	char *line_buf = NULL;
-	char colors[MAXCOLORS][MAXCOLORS][8] = { { "", "", "" }, { "", "", "" }, { "", "", "" } };
-	char norbg[8], norfg[8], selbg[8], selfg[8], urgbg[8];
-
-	const char *home;
-	char xresources_file[100];
-	if (!(home = getenv("HOME"))) {
-		home = getpwuid(getuid())->pw_dir;
-	}
-	sprintf(xresources_file, "%s/.Xresources", home);
-	FILE *fp = fopen(xresources_file, "r");
-
-	if (fp == NULL) {
-		fprintf(stderr, "failed to open Xresources\n");
-		exit(1);
-	}
-	
-	while ((nread = getline(&line_buf, &len, fp)) != -1) {
-		if (norbg[0] != '#') {
-			sscanf(line_buf, "*." NORBG ": %7s", norbg);
-		} if (norfg[0] != '#') {
-			sscanf(line_buf, "*." NORFG ": %7s", norfg);
-		} if (selbg[0] != '#') {
-			sscanf(line_buf, "*." SELBG ": %7s", selbg);
-		} if (selfg[0] != '#') {
-			sscanf(line_buf, "*." SELFG ": %7s", selfg);
-		} if (selfg[0] != '#') {
-			sscanf(line_buf, "*." URGENT ": %7s", urgbg);
-		}
-	}
-	fclose(fp);
-
-	strcpy(colors[0][0], norbg);
-	strcpy(colors[0][1], norfg);
-	strcpy(colors[0][2], norbg);
-	strcpy(colors[1][0], selbg);
-	strcpy(colors[1][1], selfg);
-	strcpy(colors[1][2], selbg);
-	strcpy(colors[2][0], urgbg);
-	strcpy(colors[2][1], selbg);
-	strcpy(colors[2][2], urgbg);
+	char *type;
+	XrmValue col;
+	XrmDatabase xrdb = XrmGetStringDatabase(XResourceManagerString(dpy));
+	char colors[MAXCOLORS][MAXCOLORS][8];
+	XrmGetResource(xrdb, NORFG, "String", &type, &col);
+	strcpy(colors[0][1], col.addr);
+	XrmGetResource(xrdb, NORBG, "String", &type, &col);
+	strcpy(colors[0][0], col.addr);
+	strcpy(colors[0][2], col.addr);
+	XrmGetResource(xrdb, SELFG, "String", &type, &col);
+	strcpy(colors[1][1], col.addr);
+	XrmGetResource(xrdb, SELBG, "String", &type, &col);
+	strcpy(colors[1][0], col.addr);
+	strcpy(colors[1][2], col.addr);
+	strcpy(colors[2][1], col.addr);
+	XrmGetResource(xrdb, URGENT, "String", &type, &col);
+	strcpy(colors[2][0], col.addr);
+	strcpy(colors[2][2], col.addr);
 
 	for (int i = 0; i < MAXCOLORS; i++) {
 		scheme[i].border = drw_clr_create(drw, colors[i][0]);
