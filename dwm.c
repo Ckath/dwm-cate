@@ -1851,7 +1851,15 @@ setmfact(const Arg *arg)
 
 	if (!arg || !selmon->lt[selmon->sellt]->arrange)
 		return;
-	f = arg->f < 1.0 ? arg->f + selmon->mfact : arg->f - 1.0;
+	if (arg->f == -1.0) { /* more effort due to the secondary mon check */
+		f = mfact;
+#ifdef SECONDARY_MFACT
+		if (selmon->num) {
+			f = SECONDARY_MFACT;
+		}
+#endif
+	} else
+		f = arg->f < 1.0 ? arg->f + selmon->mfact : arg->f - 1.0;
 	if (f < 0.1 || f > 0.9)
 		return;
 	selmon->mfact = selmon->pertag->mfacts[selmon->pertag->curtag] = f;
@@ -1864,7 +1872,8 @@ setsmfact(const Arg *arg) {
 
 	if(!arg || !selmon->lt[selmon->sellt]->arrange)
 		return;
-	sf = arg->sf < 1.0 ? arg->sf + selmon->smfact : arg->sf - 1.0;
+	sf = arg->sf == -1.0 ? smfact : arg->sf < 1.0 ?
+		arg->sf + selmon->smfact : arg->sf - 1.0;
 	if(sf < 0 || sf > 0.9)
 		return;
 	selmon->smfact = selmon->pertag->smfacts[selmon->pertag->curtag] = sf;
