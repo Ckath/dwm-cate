@@ -74,7 +74,6 @@ typedef union {
 	int i;
 	unsigned int ui;
 	float f;
-	float sf;
 	const void *v;
 } Arg;
 
@@ -1868,15 +1867,15 @@ setmfact(const Arg *arg)
 
 void
 setsmfact(const Arg *arg) {
-	float sf;
+	float f;
 
 	if(!arg || !selmon->lt[selmon->sellt]->arrange)
 		return;
-	sf = arg->sf == -1.0 ? smfact : arg->sf < 1.0 ?
-		arg->sf + selmon->smfact : arg->sf - 1.0;
-	if(sf < 0 || sf > 0.9)
+	f = arg->f == -1.0 ? smfact : arg->f < 1.0 ?
+		arg->f + selmon->smfact : arg->f - 1.0;
+	if(f < 0 || f > 0.9)
 		return;
-	selmon->smfact = selmon->pertag->smfacts[selmon->pertag->curtag] = sf;
+	selmon->smfact = selmon->pertag->smfacts[selmon->pertag->curtag] = f;
 	arrange(selmon);
 }
 
