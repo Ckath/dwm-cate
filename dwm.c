@@ -1633,22 +1633,21 @@ recttomon(int x, int y, int w, int h)
 static void
 recolor(const Arg *arg)
 {
-	char *type;
 	XrmValue col;
 	XrmDatabase xrdb = XrmGetStringDatabase(XResourceManagerString(dpy));
 	char colors[MAXCOLORS][MAXCOLORS][8];
-	XrmGetResource(xrdb, NORFG, "String", &type, &col);
+	XrmGetResource(xrdb, NORFG, "String", &(char *){NULL}, &col);
 	strcpy(colors[0][1], col.addr);
-	XrmGetResource(xrdb, NORBG, "String", &type, &col);
+	XrmGetResource(xrdb, NORBG, "String", &(char *){NULL}, &col);
 	strcpy(colors[0][0], col.addr);
 	strcpy(colors[0][2], col.addr);
-	XrmGetResource(xrdb, SELFG, "String", &type, &col);
+	XrmGetResource(xrdb, SELFG, "String", &(char *){NULL}, &col);
 	strcpy(colors[1][1], col.addr);
-	XrmGetResource(xrdb, SELBG, "String", &type, &col);
+	XrmGetResource(xrdb, SELBG, "String", &(char *){NULL}, &col);
 	strcpy(colors[1][0], col.addr);
 	strcpy(colors[1][2], col.addr);
 	strcpy(colors[2][1], col.addr);
-	XrmGetResource(xrdb, URGENT, "String", &type, &col);
+	XrmGetResource(xrdb, URGENT, "String", &(char *){NULL}, &col);
 	strcpy(colors[2][0], col.addr);
 	strcpy(colors[2][2], col.addr);
 
