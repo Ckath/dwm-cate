@@ -147,6 +147,12 @@ typedef struct {
 	int monitor;
 } Rule;
 
+typedef struct {
+	unsigned int tags;
+	int isfloating;
+	int monitor;
+} wincache;
+
 /* function declarations */
 static void applyrules(Client *c);
 static int applysizehints(Client *c, int *x, int *y, int *w, int *h, int interact);
@@ -156,6 +162,7 @@ static void attach(Client *c);
 static void attachbelow(Client *c);
 static void attachstack(Client *c);
 static void buttonpress(XEvent *e);
+static void cachewins(void);
 static void checkotherwm(void);
 static void cleanup(void);
 static void cleanupmon(Monitor *mon);
@@ -185,6 +192,7 @@ static void incnmaster(const Arg *arg);
 static void keypress(XEvent *e);
 static void killclient(const Arg *arg);
 static void manage(Window w, XWindowAttributes *wa);
+static void remanage(Window w, XWindowAttributes *wa);
 static void mappingnotify(XEvent *e);
 static void maprequest(XEvent *e);
 static void monocle(Monitor *m);
@@ -608,6 +616,27 @@ bstack(Monitor *m) {
 				resize(c, tx, ty, tw - smw, h - (2 * c->bw), 0);
 			if (tw != m->ww)
 				tx += WIDTH(c);
+		}
+	}
+}
+
+void
+cachewins(void)
+{
+	for (Monitor *m = mons; m; m = m->next) {
+		for (Client *c = m->clients; c; c = c->next) {
+			/* make cache structure for win */
+			wincache r;
+			r.tags = c->tags;
+			r.isfloating = c->isfloating;
+			r.monitor = m->num;
+
+			/* store in cache */
+			char ccache[256];
+			sprintf(ccache, "/tmp/%lu.cache", c->win);
+			FILE *fcache  = fopen(ccache, "w");
+			fwrite(&r, sizeof(wincache), 1, fcache);
+			fclose(fcache);
 		}
 	}
 }
@@ -1280,6 +1309,88 @@ manage(Window w, XWindowAttributes *wa)
 	focus(NULL);
 }
 
+void /* manage but try to restore from session info */
+remanage(Window w, XWindowAttributes *wa)
+{
+	Client *c, *t = NULL;
+	Window trans = None;
+	XWindowChanges wc;
+
+	c = ecalloc(1, sizeof(Client));
+	c->win = w;
+	/* geometry */
+	c->x = c->oldx = wa->x;
+	c->y = c->oldy = wa->y;
+	c->w = c->oldw = wa->width;
+	c->h = c->oldh = wa->height;
+	c->oldbw = wa->border_width;
+
+	updatetitle(c);
+	if (XGetTransientForHint(dpy, w, &trans) && (t = wintoclient(trans))) {
+		c->mon = t->mon;
+		c->tags = t->tags;
+	} else {
+		c->mon = selmon;
+		applyrules(c);
+	}
+
+	/* restore any cached window info */
+	char ccache[256];
+	sprintf(ccache, "/tmp/%lu.cache", w);
+	FILE *fcache = fopen(ccache, "r");
+	if (fcache) { /* read in wincache from file */
+		wincache r;
+		fread(&r, sizeof(wincache), 1, fcache);
+
+		/* apply cached info similar to applyrules */
+		c->isfloating = r.isfloating;
+		c->tags = r.tags;
+		Monitor *m;
+		for (m = mons; m && m->num != r.monitor; m = m->next);
+		if (m)
+			c->mon = m;
+
+		fclose(fcache);
+		remove(ccache);
+	}
+
+	if (c->x + WIDTH(c) > c->mon->mx + c->mon->mw)
+		c->x = c->mon->mx + c->mon->mw - WIDTH(c);
+	if (c->y + HEIGHT(c) > c->mon->my + c->mon->mh)
+		c->y = c->mon->my + c->mon->mh - HEIGHT(c);
+	c->x = MAX(c->x, c->mon->mx);
+	/* only fix client y-offset, if the client center might cover the bar */
+	c->y = MAX(c->y, ((c->mon->by == c->mon->my) && (c->x + (c->w / 2) >= c->mon->wx)
+				&& (c->x + (c->w / 2) < c->mon->wx + c->mon->ww)) ? bh : c->mon->my);
+	c->bw = borderpx;
+
+	wc.border_width = c->bw;
+	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
+	XSetWindowBorder(dpy, w, scheme[0].border->pix);
+	configure(c); /* propagates border_width, if size doesn't change */
+	updatewindowtype(c);
+	updatesizehints(c);
+	updatewmhints(c);
+	XSelectInput(dpy, w, EnterWindowMask|FocusChangeMask|PropertyChangeMask|StructureNotifyMask);
+	grabbuttons(c, 0);
+	if (!c->isfloating)
+		c->isfloating = c->oldstate = trans != None || c->isfixed;
+	if (c->isfloating)
+		XRaiseWindow(dpy, c->win);
+	attachbelow(c);
+	attachstack(c);
+	XChangeProperty(dpy, root, netatom[NetClientList], XA_WINDOW, 32, PropModeAppend,
+			(unsigned char *) &(c->win), 1);
+	XMoveResizeWindow(dpy, c->win, c->x + 2 * sw, c->y, c->w, c->h); /* some windows require this */
+	setclientstate(c, NormalState);
+	if (c->mon == selmon)
+		unfocus(selmon->sel, 0);
+	c->mon->sel = c;
+	arrange(c->mon);
+	XMapWindow(dpy, c->win);
+	focus(NULL);
+}
+
 void
 mappingnotify(XEvent *e)
 {
@@ -1721,14 +1832,14 @@ scan(void)
 					|| wa.override_redirect || XGetTransientForHint(dpy, wins[i], &d1))
 				continue;
 			if (wa.map_state == IsViewable || getstate(wins[i]) == IconicState)
-				manage(wins[i], &wa);
+				remanage(wins[i], &wa);
 		}
 		for (i = 0; i < num; i++) { /* now the transients */
 			if (!XGetWindowAttributes(dpy, wins[i], &wa))
 				continue;
 			if (XGetTransientForHint(dpy, wins[i], &d1)
 					&& (wa.map_state == IsViewable || getstate(wins[i]) == IconicState))
-				manage(wins[i], &wa);
+				remanage(wins[i], &wa);
 		}
 		if (wins)
 			XFree(wins);
@@ -1887,6 +1998,11 @@ setup(void)
 
 	/* clean up any zombies immediately */
 	sigchld(0);
+
+	/* set up quit handling */
+	signal(SIGTERM, (void *)quit);
+	signal(SIGKILL, (void *)quit);
+	signal(SIGABRT, (void *)quit);
 
 	/* init screen */
 	screen = DefaultScreen(dpy);
@@ -2594,6 +2710,7 @@ main(int argc, char *argv[])
 	setup();
 	scan();
 	run();
+	cachewins();
 	cleanup();
 	XCloseDisplay(dpy);
 	return EXIT_SUCCESS;
