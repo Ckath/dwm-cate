@@ -626,10 +626,9 @@ cachewins(void)
 	for (Monitor *m = mons; m; m = m->next) {
 		for (Client *c = m->clients; c; c = c->next) {
 			/* make cache structure for win */
-			wincache r;
-			r.tags = c->tags;
-			r.isfloating = c->isfloating;
-			r.monitor = m->num;
+			wincache r = { .tags = c->tags,
+				.isfloating = c->isfloating,
+				.monitor = m->num };
 
 			/* store in cache */
 			char ccache[256];
