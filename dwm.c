@@ -827,7 +827,7 @@ createmon(int mn)
 	int i;
 
 	m = ecalloc(1, sizeof(Monitor));
-	m->tagset[0] = m->tagset[1] = 1;
+	m->tagset[0] = m->tagset[1] = 1 << 8;
 	m->mfact = mfact;
 #ifdef SECONDARY_MFACT
 	if (mn) {
@@ -850,7 +850,7 @@ createmon(int mn)
 #endif
 	if (!(m->pertag = (Pertag *)calloc(1, sizeof(Pertag))))
 		die("fatal: could not malloc() %u bytes\n", sizeof(Pertag));
-	m->pertag->curtag = m->pertag->prevtag = 1;
+	m->pertag->curtag = m->pertag->prevtag = 9;
 	for(i=0; i <= LENGTH(tags); i++) {
 		/* init nmaster */
 		m->pertag->nmasters[i] = m->nmaster;
