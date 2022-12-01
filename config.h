@@ -91,6 +91,7 @@ static const char *patchcolors[]  = { "recolor.sh", "--fast", NULL };
 static const char *nightcmd[]     = { "night.sh", NULL };
 static const char *ldr_nightcmd[] = { "sct", "2000" , NULL };
 static const char *ldr_daycmd[]   = { "sct", "0" , NULL };
+static const char *nclrcmd[]      = { "twmnc", "--remote", "hide", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -123,6 +124,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_n,      spawn,          {.v = nightcmd } },
 	{ MODKEY,                       XK_F1,     spawn,          {.v = ldr_nightcmd } },
 	{ MODKEY,                       XK_F2,     spawn,          {.v = ldr_daycmd } },
+	{ MODKEY,                       XK_grave,  spawn,          {.v = nclrcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
