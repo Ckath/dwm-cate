@@ -830,7 +830,7 @@ createmon(int mn)
 	m->tagset[0] = m->tagset[1] = 1 << 8;
 	m->mfact = mfact;
 #ifdef SECONDARY_MFACT
-	if (mn) {
+	if (mn == 2) {
 		m->mfact = SECONDARY_MFACT;
 	}
 #endif
@@ -839,12 +839,12 @@ createmon(int mn)
 	m->showbar = showbar;
 	m->topbar = topbar;
 #ifdef PERMON_LAYOUT
-	m->sellt = mn;
+	m->sellt = mn == 2;
 #endif
 	m->lt[0] = &layouts[0];
 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
 #ifdef PERMON_LAYOUT
-	strncpy(m->ltsymbol, layouts[mn].symbol, sizeof m->ltsymbol);
+	strncpy(m->ltsymbol, layouts[mn == 2].symbol, sizeof m->ltsymbol);
 #else
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
 #endif
