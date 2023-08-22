@@ -829,8 +829,8 @@ createmon(int mn)
 	m = ecalloc(1, sizeof(Monitor));
 	m->tagset[0] = m->tagset[1] = 1 << 8;
 	m->mfact = mfact;
-#ifdef SECONDARY_MFACT
-	if (mn == 2) {
+#if defined(SECONDARY_MFACT) && defined(PERMON_LAYOUT)
+	if (PERMON_LAYOUT) {
 		m->mfact = SECONDARY_MFACT;
 	}
 #endif
@@ -839,12 +839,12 @@ createmon(int mn)
 	m->showbar = showbar;
 	m->topbar = topbar;
 #ifdef PERMON_LAYOUT
-	m->sellt = mn == 2;
+	m->sellt = PERMON_LAYOUT;
 #endif
 	m->lt[0] = &layouts[0];
 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
 #ifdef PERMON_LAYOUT
-	strncpy(m->ltsymbol, layouts[mn == 2].symbol, sizeof m->ltsymbol);
+	strncpy(m->ltsymbol, layouts[PERMON_LAYOUT].symbol, sizeof m->ltsymbol);
 #else
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
 #endif
