@@ -162,7 +162,7 @@ static void attach(Client *c);
 static void attachbelow(Client *c);
 static void attachstack(Client *c);
 static void buttonpress(XEvent *e);
-static void cachewins(void);
+static void cachewins(Client *c);
 static void checkotherwm(void);
 static void cleanup(void);
 static void cleanupmon(Monitor *mon);
@@ -621,8 +621,25 @@ bstack(Monitor *m) {
 }
 
 void
-cachewins(void)
+cachewins(Client *s)
 {
+	/* single specified client */
+	if (s) {
+		/* make cache structure for win */
+		wincache r = { .tags = s->tags,
+			.isfloating = s->isfloating,
+			.monitor = s->mon->num };
+
+		/* store in cache */
+		char ccache[256];
+		sprintf(ccache, "/tmp/%lu.cache", s->win);
+		FILE *fcache  = fopen(ccache, "w");
+		fwrite(&r, sizeof(wincache), 1, fcache);
+		fclose(fcache);
+		return;
+	}
+
+	/* no client specified do all */
 	for (Monitor *m = mons; m; m = m->next) {
 		for (Client *c = m->clients; c; c = c->next) {
 			/* make cache structure for win */
@@ -1350,7 +1367,6 @@ remanage(Window w, XWindowAttributes *wa)
 			c->mon = m;
 
 		fclose(fcache);
-		remove(ccache);
 	}
 
 	if (c->x + WIDTH(c) > c->mon->mx + c->mon->mw)
@@ -2122,6 +2138,7 @@ tag(const Arg *arg)
 		selmon->sel->tags = arg->ui & TAGMASK;
 		focus(NULL);
 		arrange(selmon);
+		cachewins(selmon->sel);
 	}
 }
 
@@ -2131,6 +2148,7 @@ tagmon(const Arg *arg)
 	if (!selmon->sel || !mons->next)
 		return;
 	sendmon(selmon->sel, dirtomon(arg->i));
+	cachewins(selmon->sel);
 }
 
 void
@@ -2708,7 +2726,7 @@ main(int argc, char *argv[])
 	setup();
 	scan();
 	run();
-	cachewins();
+	cachewins(NULL);
 	cleanup();
 	XCloseDisplay(dpy);
 	return EXIT_SUCCESS;
