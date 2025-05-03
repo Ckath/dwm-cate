@@ -847,7 +847,7 @@ createmon(int mn)
 	m->tagset[0] = m->tagset[1] = 1 << 8;
 	m->mfact = mfact;
 #if defined(SECONDARY_MFACT) && defined(PERMON_LAYOUT)
-	if (PERMON_LAYOUT) {
+	if (PERMON_LAYOUT(mn)) {
 		m->mfact = SECONDARY_MFACT;
 	}
 #endif
@@ -856,12 +856,12 @@ createmon(int mn)
 	m->showbar = showbar;
 	m->topbar = topbar;
 #ifdef PERMON_LAYOUT
-	m->sellt = PERMON_LAYOUT;
+	m->sellt = PERMON_LAYOUT(mn);
 #endif
 	m->lt[0] = &layouts[0];
 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
 #ifdef PERMON_LAYOUT
-	strncpy(m->ltsymbol, layouts[PERMON_LAYOUT].symbol, sizeof m->ltsymbol);
+	strncpy(m->ltsymbol, layouts[PERMON_LAYOUT(mn)].symbol, sizeof m->ltsymbol);
 #else
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
 #endif
@@ -1978,7 +1978,7 @@ setmfact(const Arg *arg)
 	if (arg->f == -1.0) { /* more effort due to the secondary mon check */
 		f = mfact;
 #ifdef SECONDARY_MFACT
-		if (selmon->num) {
+		if (PERMON_LAYOUT(selmon->num)) {
 			f = SECONDARY_MFACT;
 		}
 #endif
