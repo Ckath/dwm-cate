@@ -43,7 +43,7 @@ static const float smfact    = 0.00; /* factor of tiled clients [0.00..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 
-#define PERMON_LAYOUT(m) (m == 0 || m == 2) /* monitor number logic for ltile default */
+#define PERMON_LAYOUT(m) (m == 3 || m == 2) /* monitor number logic for ltile default */
 static const Layout layouts[] = {
 	/* symbol        arrange function */
 	{ "右/振り",    rtile },    /* first entry is default */
@@ -152,10 +152,10 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+	{ MODKEY,                       XK_comma, focusmon,        {.i = +1 } },
+	{ MODKEY,                       XK_period,focusmon,        {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_comma, tagmon,          {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_period,tagmon,          {.i = -1 } },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
