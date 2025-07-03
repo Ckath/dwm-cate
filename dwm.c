@@ -1998,7 +1998,7 @@ setsmfact(const Arg *arg) {
 		return;
 	f = arg->f == -1.0 ? smfact : arg->f < 1.0 ?
 		arg->f + selmon->smfact : arg->f - 1.0;
-	if(f < 0 || f > 0.9)
+	if(f < -0.9 || f > 0.9)
 		return;
 	selmon->smfact = selmon->pertag->smfacts[selmon->pertag->curtag] = f;
 	arrange(selmon);
